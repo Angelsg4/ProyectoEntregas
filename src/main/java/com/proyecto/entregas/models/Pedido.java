@@ -1,6 +1,6 @@
 package com.proyecto.entregas.models;
 
-import com.entregas.enums.EstadoPedido;
+import com.proyecto.entregas.enums.EstadoPedido;
 import jakarta.persistence.*;
 import lombok.*;
 
