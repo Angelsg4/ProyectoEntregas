@@ -1,5 +1,6 @@
 package com.proyecto.entregas.controllers;
 
+import jakarta.validation.Valid;
 import com.proyecto.entregas.dtos.RepartidorDTO;
 import com.proyecto.entregas.services.RepartidorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,24 @@ public class RepartidorController {
     }
 
     @PostMapping
-    public ResponseEntity<RepartidorDTO> crear(@RequestBody RepartidorDTO dto) {
-        return new ResponseEntity<>(repartidorService.crear(dto), HttpStatus.CREATED);
-    }
+    public ResponseEntity<RepartidorDTO> crear(
+        @Valid @RequestBody RepartidorDTO dto) {
+
+    return new ResponseEntity<>(
+            repartidorService.crear(dto),
+            HttpStatus.CREATED
+    );
+}
 
     @PutMapping("/{id}")
-    public ResponseEntity<RepartidorDTO> actualizar(@PathVariable Long id, @RequestBody RepartidorDTO dto) {
-        return ResponseEntity.ok(repartidorService.actualizar(id, dto));
-    }
+    public ResponseEntity<RepartidorDTO> actualizar(
+        @PathVariable Long id,
+        @Valid @RequestBody RepartidorDTO dto) {
+
+    return ResponseEntity.ok(
+            repartidorService.actualizar(id, dto)
+    );
+}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
