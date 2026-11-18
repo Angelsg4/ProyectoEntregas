@@ -5,6 +5,7 @@ import com.proyecto.entregas.models.Repartidor;
 import com.proyecto.entregas.repositories.RepositorioRepartidor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.proyecto.entregas.excepciones.RecursoNoEncontradoExcepcion;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,10 +23,14 @@ public class RepartidorService {
     }
 
     public RepartidorDTO obtenerPorId(Long id) {
-        Repartidor repartidor = repartidorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Repartidor no encontrado con ID: " + id));
-        return convertirADTO(repartidor);
-    }
+
+    Repartidor repartidor = repartidorRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Repartidor no encontrado con ID: " + id
+            ));
+
+    return convertirADTO(repartidor);
+}
 
     public RepartidorDTO crear(RepartidorDTO dto) {
         Repartidor repartidor = new Repartidor();
@@ -38,19 +43,29 @@ public class RepartidorService {
     }
 
     public RepartidorDTO actualizar(Long id, RepartidorDTO dto) {
-        Repartidor repartidor = repartidorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Repartidor no encontrado con ID: " + id));
 
-        repartidor.setNombre(dto.getNombre());
-        repartidor.setTelefono(dto.getTelefono());
-        repartidor.setVehiculo(dto.getVehiculo());
+    Repartidor repartidor = repartidorRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Repartidor no encontrado con ID: " + id
+            ));
 
-        Repartidor actualizado = repartidorRepository.save(repartidor);
-        return convertirADTO(actualizado);
+    repartidor.setNombre(dto.getNombre());
+    repartidor.setTelefono(dto.getTelefono());
+    repartidor.setVehiculo(dto.getVehiculo());
+
+    Repartidor actualizado = repartidorRepository.save(repartidor);
+
+    return convertirADTO(actualizado);
     }
 
     public void eliminar(Long id) {
-        repartidorRepository.deleteById(id);
+
+    Repartidor repartidor = repartidorRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Repartidor no encontrado con ID: " + id
+            ));
+
+    repartidorRepository.delete(repartidor);
     }
 
     private RepartidorDTO convertirADTO(Repartidor repartidor) {

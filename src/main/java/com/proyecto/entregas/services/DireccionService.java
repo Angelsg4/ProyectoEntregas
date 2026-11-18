@@ -5,6 +5,7 @@ import com.proyecto.entregas.models.Direccion;
 import com.proyecto.entregas.repositories.RepositorioDireccion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.proyecto.entregas.excepciones.RecursoNoEncontradoExcepcion;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +23,12 @@ public class DireccionService {
     }
 
     public DireccionDTO obtenerPorId(Long id) {
-        Direccion direccion = direccionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada con ID: " + id));
-        return convertirADTO(direccion);
+    Direccion direccion = direccionRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Dirección no encontrada con ID: " + id
+            ));
+
+    return convertirADTO(direccion);
     }
 
     public DireccionDTO crear(DireccionDTO dto) {
@@ -35,8 +39,9 @@ public class DireccionService {
 
     public DireccionDTO actualizar(Long id, DireccionDTO dto) {
         Direccion direccion = direccionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada con ID: " + id));
-
+        .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                "Dirección no encontrada con ID: " + id
+        ));
         direccion.setCalle(dto.getCalle());
         direccion.setNumero(dto.getNumero());
         direccion.setColonia(dto.getColonia());
@@ -48,8 +53,14 @@ public class DireccionService {
     }
 
     public void eliminar(Long id) {
-        direccionRepository.deleteById(id);
-    }
+
+    Direccion direccion = direccionRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Dirección no encontrada con ID: " + id
+            ));
+
+    direccionRepository.delete(direccion);
+}
 
     public DireccionDTO convertirADTO(Direccion direccion) {
         if (direccion == null) return null;

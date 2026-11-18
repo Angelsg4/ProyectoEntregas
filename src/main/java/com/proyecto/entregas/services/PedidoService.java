@@ -9,6 +9,7 @@ import com.proyecto.entregas.repositories.RepositorioPedido;
 import com.proyecto.entregas.repositories.RepositorioRepartidor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.proyecto.entregas.excepciones.RecursoNoEncontradoExcepcion;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,10 +33,13 @@ public class PedidoService {
     }
 
     public PedidoResponseDTO obtenerPorId(Long id) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
-        return convertirAResponseDTO(pedido);
-    }
+    Pedido pedido = pedidoRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Pedido no encontrado con ID: " + id
+            ));
+
+    return convertirAResponseDTO(pedido);
+}
 
     public PedidoResponseDTO crear(CrearPedidoDTO dto) {
         Pedido pedido = new Pedido();
@@ -49,8 +53,9 @@ public class PedidoService {
 
         if (dto.getRepartidorId() != null) {
             Repartidor repartidor = repartidorRepository.findById(dto.getRepartidorId())
-                    .orElseThrow(() -> new RuntimeException("Repartidor no encontrado con ID: " + dto.getRepartidorId()));
-            pedido.setRepartidor(repartidor);
+                    .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+        "Repartidor no encontrado con ID: " + dto.getRepartidorId()
+));
         }
 
         Pedido guardado = pedidoRepository.save(pedido);
@@ -59,7 +64,7 @@ public class PedidoService {
 
     public PedidoResponseDTO actualizarEstado(Long id, ActualizarEstadoPedidoDTO dto) {
         Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoExcepcion("Pedido no encontrado con ID: " + id));
 
         if (dto.getNuevoEstado() != null) {
             pedido.setEstado(dto.getNuevoEstado());
@@ -67,7 +72,7 @@ public class PedidoService {
 
         if (dto.getRepartidorId() != null) {
             Repartidor repartidor = repartidorRepository.findById(dto.getRepartidorId())
-                    .orElseThrow(() -> new RuntimeException("Repartidor no encontrado con ID: " + dto.getRepartidorId()));
+                    .orElseThrow(() -> new RecursoNoEncontradoExcepcion("Repartidor no encontrado con ID: " + dto.getRepartidorId()));
             pedido.setRepartidor(repartidor);
         }
 
@@ -76,11 +81,20 @@ public class PedidoService {
     }
 
     public void eliminar(Long id) {
-        pedidoRepository.deleteById(id);
+    Pedido pedido = pedidoRepository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoExcepcion(
+                    "Pedido no encontrado con ID: " + id
+            ));
+
+    pedidoRepository.delete(pedido);
     }
 
     private PedidoResponseDTO convertirAResponseDTO(Pedido pedido) {
-        DireccionDTO direccionDTO = direccionService.convertirADTO(pedido.getDestino());
+        DireccionDTO direccionDTO = null;
+
+        if (pedido.getDestino() != null) {
+        direccionDTO = direccionService.convertirADTO(pedido.getDestino());
+        }
         
         RepartidorDTO repartidorDTO = null;
         if (pedido.getRepartidor() != null) {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -27,8 +28,11 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoResponseDTO> crear(@RequestBody CrearPedidoDTO dto) {
-        return new ResponseEntity<>(pedidoService.crear(dto), HttpStatus.CREATED);
+    public ResponseEntity<PedidoResponseDTO> crear(
+        @Valid @RequestBody CrearPedidoDTO dto) {
+
+    PedidoResponseDTO pedido = pedidoService.crear(dto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(pedido);
     }
 
     @PatchMapping("/{id}/estado")

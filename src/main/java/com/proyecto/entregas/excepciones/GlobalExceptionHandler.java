@@ -1,4 +1,5 @@
-package com.proyecto.entregas.exceptions;
+
+package com.proyecto.entregas.excepciones;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(respuesta);
+    }
+
+    @ExceptionHandler(RecursoNoEncontradoExcepcion.class)
+public ResponseEntity<Map<String, Object>> manejarRecursoNoEncontrado(
+        RecursoNoEncontradoExcepcion ex) {
+
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+
+        respuesta.put("status", 404);
+        respuesta.put("mensaje", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(respuesta);
     }
 }
