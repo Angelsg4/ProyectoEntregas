@@ -60,7 +60,7 @@ public class DireccionService {
             ));
 
     direccionRepository.delete(direccion);
-}
+    }
 
     public DireccionDTO convertirADTO(Direccion direccion) {
         if (direccion == null) return null;

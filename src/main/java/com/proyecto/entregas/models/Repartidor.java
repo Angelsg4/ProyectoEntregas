@@ -10,7 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Repartidor {
-
+    @OneToOne
+    @JoinColumn(name = "usuario_id", unique = true)
+    private Usuario usuario;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
